@@ -202,9 +202,9 @@ input,textarea,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;
 #view-viewer .btn-pc-icon{width:44px;height:44px;background:#fff;border:1px solid #ddd;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
 #view-viewer .pc-grid-title{font-size:15px;font-weight:700;margin-bottom:15px;color:#333;padding-left:2px;}
 #view-viewer .pc-item-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:16px;background:#fafafa;border-radius:6px;}
-#view-viewer .pc-sticker-slot{background:#fff;border:1px solid #eaeaea;border-radius:6px;display:flex;align-items:center;justify-content:center;padding:12px;transition:transform .2s;aspect-ratio:740/640;}
+#view-viewer .pc-sticker-slot{background:transparent;border:1px solid #eaeaea;border-radius:6px;overflow:hidden;transition:transform .2s;aspect-ratio:740/640;}
 #view-viewer .pc-sticker-slot:hover{transform:scale(1.04);border-color:#00C389;}
-#view-viewer .pc-sticker-slot img{max-width:100%;max-height:100%;object-fit:contain;}
+#view-viewer .pc-sticker-slot img{width:100%;height:100%;object-fit:cover;display:block;}
 #view-viewer .mobile-layout{width:390px;background:#fff;border-radius:24px;border:6px solid #222;overflow:hidden;display:flex;flex-direction:column;position:relative;}
 #view-viewer .mobile-app-bar{height:50px;border-bottom:1px solid #eee;display:flex;align-items:center;padding:0 16px;justify-content:space-between;font-weight:700;font-size:16px;flex-shrink:0;}
 #view-viewer .mobile-tabs{display:flex;height:42px;border-bottom:1px solid #eee;text-align:center;line-height:42px;font-size:13px;font-weight:700;color:#999;flex-shrink:0;}
@@ -218,8 +218,8 @@ input,textarea,[contenteditable]{-webkit-user-select:text;-moz-user-select:text;
 #view-viewer .mobile-m-title{font-size:16px;font-weight:700;color:#111;margin-bottom:4px;}
 #view-viewer .mobile-m-author{font-size:12px;color:#777;}
 #view-viewer .mobile-item-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-#view-viewer .mobile-sticker-slot{background:#fff;border:1px solid #f0f0f0;border-radius:6px;display:flex;align-items:center;justify-content:center;padding:8px;aspect-ratio:740/640;}
-#view-viewer .mobile-sticker-slot img{max-width:100%;max-height:100%;object-fit:contain;}
+#view-viewer .mobile-sticker-slot{background:transparent;border:1px solid #f0f0f0;border-radius:6px;overflow:hidden;aspect-ratio:740/640;}
+#view-viewer .mobile-sticker-slot img{width:100%;height:100%;object-fit:cover;display:block;}
 #view-viewer .mobile-bottom-bar{position:absolute;bottom:0;left:0;width:100%;height:64px;background:#fff;border-top:1px solid #eee;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;}
 #view-viewer .btn-m-heart{width:44px;height:44px;border:1px solid #ddd;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#fff;}
 #view-viewer .btn-m-buy{flex:1;height:44px;background:#00C389;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;}
@@ -496,11 +496,11 @@ const state = {
     <div class="left-panel">
       <div>
         <h3>01 • Upload Main Image</h3>
-        <div class="upload-box" id="vw-main-drop-zone" style="border-color:#00C389;background:#f6fffb;"><strong style="color:#00C389;">Drag & Drop Main Image</strong><span id="vw-main-upload-status">마켓 상단 및 썸네일에 노출될 단일 메인 이미지 파일 선택</span><input type="file" id="vw-main-file-input" accept="image/png" style="display:none;"></div>
+        <div class="upload-box" id="vw-main-drop-zone" style="border-color:#00C389;background:#f6fffb;padding:16px 20px;"><strong style="color:#00C389;">Drag & Drop Main Image</strong><span id="vw-main-upload-status">마켓 상단 및 썸네일에 노출될 단일 메인 이미지 파일 선택</span><input type="file" id="vw-main-file-input" accept="image/png" style="display:none;"></div>
       </div>
       <div>
         <div class="panel-header-row"><h3>02 • Upload Student Assets (24 Stickers)</h3><button id="vw-btn-clear-all" class="btn-clear" style="float:none;">Clear Images</button></div>
-        <div class="upload-box" id="vw-drop-zone"><strong>Drag & Drop 24 Stickers (740x640)</strong><span>또는 클릭하여 한번에 다중 선택 (PNG 형식)</span><input type="file" id="vw-file-input" accept="image/png" style="display:none;" multiple></div>
+        <div class="upload-box" id="vw-drop-zone" style="padding:16px 20px;"><strong>Drag &amp; Drop 24 Stickers (740x640)</strong><span>또는 클릭하여 한번에 다중 선택 (PNG 형식)</span><input type="file" id="vw-file-input" accept="image/png" style="display:none;" multiple></div>
       </div>
       <div>
         <h3>03 • 심사 제출 규격 격자형태 (6 x 4 Grid • 740x640 비율)</h3>
@@ -777,6 +777,9 @@ function applyVisibility(){
     }
   });
 }
+/* Supabase 동기화 전까지 카드 그리드 숨김 → 깜빡임 방지 */
+const hubGrid = document.querySelector('#view-hub .grid');
+if(hubGrid) hubGrid.style.visibility='hidden';
 applyVisibility();
 
 /* 인스타그램 링크: 모든 페이지(허브+서브뷰) 공통 클릭 처리.
@@ -795,7 +798,7 @@ document.addEventListener('click', function(e){
    - 관리자가 토글을 누르면 toggleMenu()에서 즉시 Supabase로 업데이트합니다.
    ===================================================== */
 async function syncStateFromSupabase(){
-  if(!supabaseClient) return;
+  if(!supabaseClient){ if(hubGrid) hubGrid.style.visibility=''; return; }
   try{
     const { data, error } = await supabaseClient.from('menu_state').select('id, is_open');
     if(error) throw error;
@@ -811,9 +814,12 @@ async function syncStateFromSupabase(){
       applyVisibility();
       refreshAdminToggles();
     }
+    /* 동기화 완료 → 카드 그리드 표시 */
+    if(hubGrid) hubGrid.style.visibility='';
   }catch(e){
     console.error('Supabase 상태 동기화 실패:', (e && (e.message||e.details||e.hint)) ? `${e.message||''} ${e.details||''} ${e.hint||''} (code:${e.code||'?'})` : String(e));
     setSyncStatus(false);
+    if(hubGrid) hubGrid.style.visibility='';
   }
 }
 
@@ -1170,8 +1176,10 @@ function renderEngine(){
       const imgSub=document.createElement('img'); imgSub.src=data.src; subSlots[i].appendChild(imgSub);
       const imgPc=document.createElement('img'); imgPc.src=data.src; pcSlots[i].appendChild(imgPc);
       const imgMobile=document.createElement('img'); imgMobile.src=data.src; mobileSlots[i].appendChild(imgMobile);
+      pcSlots[i].style.visibility=''; mobileSlots[i].style.visibility='';
     } else {
       subSlots[i].classList.remove('filled'); subSlots[i].removeAttribute('draggable');
+      pcSlots[i].style.visibility=''; mobileSlots[i].style.visibility='';
     }
   }
 }
